@@ -1,0 +1,923 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>会展知识大冒险</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.8/dist/chart.umd.min.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#165DFF',
+                        secondary: '#FF7D00',
+                        success: '#00B42A',
+                        danger: '#F53F3F',
+                        neutral: '#F2F3F5',
+                        dark: '#1D2129',
+                        accent: '#FFD166',
+                        gold: '#FFD700',
+                        silver: '#C0C0C0',
+                        bronze: '#CD7F32',
+                        exhibition: '#36BFFA',
+                        conference: '#69B1FF',
+                        event: '#A855F7',
+                        venue: '#F97316'
+                    },
+                    fontFamily: {
+                        inter: ['Inter', 'system-ui', 'sans-serif'],
+                    },
+                    animation: {
+                        'float': 'float 3s ease-in-out infinite',
+                        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'bounce-in': 'bounceIn 0.5s ease-out',
+                        'scale-up': 'scaleUp 0.3s ease-out',
+                        'confetti': 'confetti 2s ease-out forwards',
+                        'shake': 'shake 0.5s ease-in-out',
+                        'spin-slow': 'spin 8s linear infinite',
+                        'glow': 'glow 2s ease-in-out infinite alternate',
+                        'slide-in': 'slideIn 0.5s ease-out forwards',
+                        'fade-in': 'fadeIn 0.5s ease-out forwards',
+                        'bounce': 'bounce 1s ease-in-out infinite',
+                        'grow': 'grow 0.5s ease-out forwards',
+                        'shrink': 'shrink 0.5s ease-out forwards'
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-10px)' },
+                        },
+                        bounceIn: {
+                            '0%': { transform: 'scale(0.3)', opacity: 0 },
+                            '50%': { transform: 'scale(1.05)', opacity: 1 },
+                            '70%': { transform: 'scale(0.9)', opacity: 1 },
+                            '100%': { transform: 'scale(1)', opacity: 1 },
+                        },
+                        scaleUp: {
+                            '0%': { transform: 'scale(0.95)', opacity: 0.5 },
+                            '100%': { transform: 'scale(1)', opacity: 1 },
+                        },
+                        confetti: {
+                            '0%': { transform: 'translateY(-100vh) rotate(0deg)', opacity: 0 },
+                            '50%': { opacity: 1 },
+                            '100%': { transform: 'translateY(0) rotate(360deg)', opacity: 0 },
+                        },
+                        shake: {
+                            '0%, 100%': { transform: 'translateX(0)' },
+                            '10%, 30%, 50%, 70%, 90%': { transform: 'translateX(-5px)' },
+                            '20%, 40%, 60%, 80%': { transform: 'translateX(5px)' },
+                        },
+                        glow: {
+                            '0%': { box-shadow: '0 0 5px rgba(22, 93, 255, 0.5)' },
+                            '100%': { box-shadow: '0 0 20px rgba(22, 93, 255, 0.8), 0 0 30px rgba(22, 93, 255, 0.6)' },
+                        },
+                        slideIn: {
+                            '0%': { transform: 'translateX(-20px)', opacity: 0 },
+                            '100%': { transform: 'translateX(0)', opacity: 1 },
+                        },
+                        fadeIn: {
+                            '0%': { opacity: 0 },
+                            '100%': { opacity: 1 },
+                        },
+                        grow: {
+                            '0%': { transform: 'scale(1)' },
+                            '100%': { transform: 'scale(1.1)' },
+                        },
+                        shrink: {
+                            '0%': { transform: 'scale(1.1)' },
+                            '100%': { transform: 'scale(1)' },
+                        }
+                    }
+                },
+            }
+        }
+    </script>
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .content-auto {
+                content-visibility: auto;
+            }
+            .text-shadow {
+                text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            }
+            .text-shadow-lg {
+                text-shadow: 0 4px 8px rgba(0,0,0,0.12), 0 2px 4px rgba(0,0,0,0.08);
+            }
+            .bg-blur {
+                backdrop-filter: blur(8px);
+            }
+            .card-hover {
+                transition: all 0.3s ease;
+            }
+            .card-hover:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 10px 25px -5px rgba(22, 93, 255, 0.1), 0 10px 10px -5px rgba(22, 93, 255, 0.04);
+            }
+            .btn-pulse {
+                animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+            }
+            .btn-hover {
+                transition: all 0.3s ease;
+            }
+            .btn-hover:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 10px 15px -3px rgba(22, 93, 255, 0.1), 0 4px 6px -2px rgba(22, 93, 255, 0.05);
+            }
+            .question-appear {
+                animation: fadeInUp 0.5s ease forwards;
+            }
+            .option-appear {
+                animation: fadeInUp 0.3s ease forwards;
+            }
+            @keyframes fadeInUp {
+                from {
+                    opacity: 0;
+                    transform: translateY(20px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+            .result-appear {
+                animation: zoomIn 0.5s ease forwards;
+            }
+            @keyframes zoomIn {
+                from {
+                    opacity: 0;
+                    transform: scale(0.8);
+                }
+                to {
+                    opacity: 1;
+                    transform: scale(1);
+                }
+            }
+            .timer-pulse {
+                animation: timerPulse 1s ease-in-out infinite;
+            }
+            @keyframes timerPulse {
+                0%, 100% { transform: scale(1); }
+                50% { transform: scale(1.1); }
+            }
+            .confetti {
+                position: absolute;
+                width: 10px;
+                height: 10px;
+                background-color: var(--bg-color);
+                border-radius: 50%;
+                animation: confetti 2s ease-out forwards;
+            }
+            .trophy-glow {
+                filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.7));
+            }
+            .game-object {
+                transition: all 0.3s ease;
+            }
+            .game-object:hover {
+                transform: scale(1.05);
+                filter: brightness(1.1);
+            }
+            .path-line {
+                stroke-dasharray: 1000;
+                stroke-dashoffset: 1000;
+                animation: dash 5s linear forwards;
+            }
+            @keyframes dash {
+                to {
+                    stroke-dashoffset: 0;
+                }
+            }
+            .progress-bar-animate {
+                transition: width 1s ease-in-out;
+            }
+            .fade-in-delay-1 {
+                animation: fadeIn 0.5s ease-out 0.2s forwards;
+                opacity: 0;
+            }
+            .fade-in-delay-2 {
+                animation: fadeIn 0.5s ease-out 0.4s forwards;
+                opacity: 0;
+            }
+            .fade-in-delay-3 {
+                animation: fadeIn 0.5s ease-out 0.6s forwards;
+                opacity: 0;
+            }
+            .game-card {
+                transition: all 0.3s ease;
+            }
+            .game-card:hover {
+                transform: translateY(-8px);
+                box-shadow: 0 15px 30px -5px rgba(22, 93, 255, 0.1), 0 10px 10px -5px rgba(22, 93, 255, 0.04);
+            }
+            .exhibition-map {
+                background-image: url('https://picsum.photos/id/1031/800/600');
+                background-size: cover;
+                background-position: center;
+            }
+        }
+    </style>
+</head>
+<body class="font-inter bg-gradient-to-br from-blue-50 to-indigo-50 min-h-screen">
+    <!-- 粒子背景 -->
+    <div id="particles" class="fixed inset-0 pointer-events-none z-0 opacity-20"></div>
+    
+    <!-- 游戏容器 -->
+    <div class="container mx-auto px-4 py-8 relative z-10 max-w-6xl">
+        <!-- 顶部导航 -->
+        <header class="mb-8 flex justify-between items-center">
+            <div class="flex items-center space-x-2">
+                <i class="fa fa-map-signs text-primary text-2xl"></i>
+                <h1 class="text-xl font-bold text-dark">会展知识大冒险</h1>
+            </div>
+            <div id="player-info" class="hidden flex items-center space-x-4">
+                <div class="flex items-center">
+                    <i class="fa fa-user-circle text-primary"></i>
+                    <span id="player-name" class="ml-2 text-sm font-medium">玩家</span>
+                </div>
+                <div class="flex items-center">
+                    <i class="fa fa-star text-accent"></i>
+                    <span id="player-score" class="ml-2 text-sm font-medium">0</span>
+                </div>
+                <div class="flex items-center">
+                    <i class="fa fa-coins text-gold"></i>
+                    <span id="player-coins" class="ml-2 text-sm font-medium">0</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- 游戏内容 -->
+        <main>
+            <!-- 开始页面 -->
+            <section id="start-screen" class="min-h-[70vh] flex flex-col items-center justify-center text-center px-4">
+                <div class="mb-8 animate-float">
+                    <img src="https://picsum.photos/id/1025/200/200" alt="会展知识大冒险" class="w-40 h-40 rounded-full object-cover shadow-lg border-4 border-primary">
+                </div>
+                <h2 class="text-[clamp(1.5rem,5vw,2.5rem)] font-bold text-dark mb-4 text-shadow-lg">会展知识大冒险</h2>
+                <p class="text-gray-600 mb-8 max-w-md mx-auto">
+                    踏上会展行业的探索之旅，<br>
+                    挑战自我，赢取徽章和奖励！
+                </p>
+                
+                <!-- 游戏模式选择 -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8 max-w-md mx-auto">
+                    <div class="game-card bg-white rounded-xl shadow-lg p-6 cursor-pointer hover:border-primary hover:border-2 transition-all duration-300">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="bg-primary/10 text-primary text-sm font-semibold py-1 px-3 rounded-full">
+                                经典模式
+                            </div>
+                            <i class="fa fa-trophy text-gold text-xl"></i>
+                        </div>
+                        <h3 class="text-lg font-bold text-dark mb-2">知识挑战</h3>
+                        <p class="text-gray-600 text-sm">
+                            回答10道会展相关问题，测试你的专业知识水平
+                        </p>
+                    </div>
+                    <div class="game-card bg-white rounded-xl shadow-lg p-6 cursor-pointer hover:border-primary hover:border-2 transition-all duration-300">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="bg-secondary/10 text-secondary text-sm font-semibold py-1 px-3 rounded-full">
+                                冒险模式
+                            </div>
+                            <i class="fa fa-compass text-secondary text-xl"></i>
+                        </div>
+                        <h3 class="text-lg font-bold text-dark mb-2">会展大冒险</h3>
+                        <p class="text-gray-600 text-sm">
+                            在虚拟会展中心探索，完成任务，解锁新区域
+                        </p>
+                    </div>
+                </div>
+                
+                <!-- 玩家信息输入 -->
+                <div class="bg-white rounded-xl shadow-lg p-6 max-w-md mx-auto mb-8">
+                    <h3 class="text-lg font-bold text-dark mb-4">创建你的角色</h3>
+                    <div class="space-y-4">
+                        <div>
+                            <label for="player-name-input" class="block text-sm font-medium text-gray-700 mb-1">
+                                你的名字
+                            </label>
+                            <input type="text" id="player-name-input" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition-colors" placeholder="输入你的名字">
+                        </div>
+                        <div>
+                            <label for="avatar-selection" class="block text-sm font-medium text-gray-700 mb-1">
+                                选择头像
+                            </label>
+                            <div class="flex flex-wrap gap-3">
+                                <div class="avatar-option w-12 h-12 rounded-full border-2 border-gray-200 cursor-pointer hover:border-primary transition-colors" data-avatar="1">
+                                    <img src="https://picsum.photos/id/1012/100/100" alt="头像1" class="w-full h-full rounded-full object-cover">
+                                </div>
+                                <div class="avatar-option w-12 h-12 rounded-full border-2 border-gray-200 cursor-pointer hover:border-primary transition-colors" data-avatar="2">
+                                    <img src="https://picsum.photos/id/1027/100/100" alt="头像2" class="w-full h-full rounded-full object-cover">
+                                </div>
+                                <div class="avatar-option w-12 h-12 rounded-full border-2 border-gray-200 cursor-pointer hover:border-primary transition-colors" data-avatar="3">
+                                    <img src="https://picsum.photos/id/1025/100/100" alt="头像3" class="w-full h-full rounded-full object-cover">
+                                </div>
+                                <div class="avatar-option w-12 h-12 rounded-full border-2 border-gray-200 cursor-pointer hover:border-primary transition-colors" data-avatar="4">
+                                    <img src="https://picsum.photos/id/1074/100/100" alt="头像4" class="w-full h-full rounded-full object-cover">
+                                </div>
+                                <div class="avatar-option w-12 h-12 rounded-full border-2 border-gray-200 cursor-pointer hover:border-primary transition-colors" data-avatar="5">
+                                    <img src="https://picsum.photos/id/1062/100/100" alt="头像5" class="w-full h-full rounded-full object-cover">
+                                </div>
+                                <div class="avatar-option w-12 h-12 rounded-full border-2 border-gray-200 cursor-pointer hover:border-primary transition-colors" data-avatar="6">
+                                    <img src="https://picsum.photos/id/1077/100/100" alt="头像6" class="w-full h-full rounded-full object-cover">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <button id="start-game-btn" class="bg-primary hover:bg-primary/90 text-white font-bold py-3 px-8 rounded-full shadow-lg btn-pulse btn-hover flex items-center space-x-2">
+                    <i class="fa fa-play-circle"></i>
+                    <span>开始冒险</span>
+                </button>
+            </section>
+
+            <!-- 经典模式 - 问题页面 -->
+            <section id="quiz-screen" class="hidden min-h-[70vh]">
+                <div id="quiz-container" class="bg-white rounded-2xl shadow-xl p-6 mb-8">
+                    <div class="flex justify-between items-start mb-4">
+                        <div class="bg-primary/10 text-primary text-sm font-semibold py-1 px-3 rounded-full">
+                            问题 <span id="quiz-question-number">1</span>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <div id="quiz-streak-container" class="hidden bg-accent/20 text-accent text-xs font-bold py-1 px-2 rounded-full flex items-center">
+                                <i class="fa fa-bolt mr-1"></i>
+                                <span id="quiz-streak-count">0</span>
+                            </div>
+                            <div class="text-xs text-gray-500">
+                                <span id="quiz-timer" class="timer-pulse">30</span>秒
+                            </div>
+                        </div>
+                    </div>
+                    <h3 id="quiz-question-text" class="text-xl font-bold text-dark mb-6">
+                        问题文本将在这里显示
+                    </h3>
+                    <div id="quiz-options-container" class="space-y-3">
+                        <!-- 选项将通过JS动态生成 -->
+                    </div>
+                </div>
+                
+                <!-- 游戏道具栏 -->
+                <div id="quiz-power-ups-container" class="grid grid-cols-3 gap-3 mb-8">
+                    <div class="power-up bg-white rounded-xl shadow-md p-3 flex flex-col items-center justify-center cursor-pointer hover:bg-primary/5 transition-colors" data-power-up="50-50">
+                        <i class="fa fa-percent text-primary text-xl mb-1"></i>
+                        <span class="text-xs font-medium">50/50</span>
+                        <span class="text-xs text-gray-500" id="quiz-power-up-50-50-count">1</span>
+                    </div>
+                    <div class="power-up bg-white rounded-xl shadow-md p-3 flex flex-col items-center justify-center cursor-pointer hover:bg-primary/5 transition-colors" data-power-up="extra-time">
+                        <i class="fa fa-clock-o text-primary text-xl mb-1"></i>
+                        <span class="text-xs font-medium">额外时间</span>
+                        <span class="text-xs text-gray-500" id="quiz-power-up-extra-time-count">1</span>
+                    </div>
+                    <div class="power-up bg-white rounded-xl shadow-md p-3 flex flex-col items-center justify-center cursor-pointer hover:bg-primary/5 transition-colors" data-power-up="skip">
+                        <i class="fa fa-forward text-primary text-xl mb-1"></i>
+                        <span class="text-xs font-medium">跳过</span>
+                        <span class="text-xs text-gray-500" id="quiz-power-up-skip-count">1</span>
+                    </div>
+                </div>
+                
+                <!-- 游戏进度 -->
+                <div class="bg-white rounded-xl shadow-md p-4 mb-8">
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="text-sm text-gray-500">当前进度</span>
+                        <span class="text-sm font-medium">
+                            <span id="quiz-progress-current">0</span>/<span id="quiz-progress-total">10</span>
+                        </span>
+                    </div>
+                    <div class="w-full h-2 bg-gray-200 rounded-full overflow-hidden">
+                        <div id="quiz-progress-bar" class="h-full bg-primary rounded-full progress-bar-animate" style="width: 0%"></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 冒险模式 - 地图页面 -->
+            <section id="adventure-screen" class="hidden min-h-[70vh]">
+                <div class="bg-white rounded-2xl shadow-xl p-6 mb-8">
+                    <div class="flex justify-between items-center mb-6">
+                        <h3 class="text-xl font-bold text-dark">会展大冒险地图</h3>
+                        <div class="flex items-center space-x-3">
+                            <div class="bg-primary/10 text-primary text-sm font-semibold py-1 px-3 rounded-full flex items-center">
+                                <i class="fa fa-star mr-1"></i>
+                                <span id="adventure-score">0</span>
+                            </div>
+                            <div class="bg-secondary/10 text-secondary text-sm font-semibold py-1 px-3 rounded-full flex items-center">
+                                <i class="fa fa-coins mr-1"></i>
+                                <span id="adventure-coins">0</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 会展中心地图 -->
+                    <div class="relative exhibition-map rounded-xl overflow-hidden h-80 md:h-96 mb-6">
+                        <!-- 地图上的游戏元素 -->
+                        <div id="player-avatar" class="absolute w-12 h-12 rounded-full border-2 border-primary shadow-lg transform -translate-x-1/2 -translate-y-1/2 cursor-pointer game-object" style="left: 15%; top: 25%">
+                            <img src="https://picsum.photos/id/1025/100/100" alt="玩家头像" class="w-full h-full rounded-full object-cover">
+                        </div>
+                        
+                        <!-- 展览区 -->
+                        <div class="game-location absolute w-16 h-16 bg-exhibition/80 rounded-lg shadow-lg flex items-center justify-center cursor-pointer game-object" style="left: 40%; top: 30%">
+                            <i class="fa fa-cubes text-white text-xl"></i>
+                        </div>
+                        
+                        <!-- 会议区 -->
+                        <div class="game-location absolute w-16 h-16 bg-conference/80 rounded-lg shadow-lg flex items-center justify-center cursor-pointer game-object" style="left: 65%; top: 20%">
+                            <i class="fa fa-comments text-white text-xl"></i>
+                        </div>
+                        
+                        <!-- 活动区 -->
+                        <div class="game-location absolute w-16 h-16 bg-event/80 rounded-lg shadow-lg flex items-center justify-center cursor-pointer game-object" style="left: 30%; top: 60%">
+                            <i class="fa fa-calendar text-white text-xl"></i>
+                        </div>
+                        
+                        <!-- 场馆管理 -->
+                        <div class="game-location absolute w-16 h-16 bg-venue/80 rounded-lg shadow-lg flex items-center justify-center cursor-pointer game-object" style="left: 70%; top: 65%">
+                            <i class="fa fa-building text-white text-xl"></i>
+                        </div>
+                        
+                        <!-- 路径指示 -->
+                        <svg class="absolute inset-0 w-full h-full pointer-events-none" xmlns="http://www.w3.org/2000/svg">
+                            <path class="path-line" d="M15,25 Q40,35 40,30 T65,20" stroke="#165DFF" stroke-width="2" fill="none" />
+                            <path class="path-line" d="M40,30 Q35,45 30,60" stroke="#165DFF" stroke-width="2" fill="none" />
+                            <path class="path-line" d="M30,60 Q50,65 70,65" stroke="#165DFF" stroke-width="2" fill="none" />
+                        </svg>
+                    </div>
+                    
+                    <!-- 游戏提示 -->
+                    <div class="bg-blue-50 rounded-xl p-3 text-sm text-blue-700 flex items-start">
+                        <i class="fa fa-lightbulb-o text-primary mt-0.5 mr-2"></i>
+                        <span>点击地图上的不同区域探索会展行业的各个方面，完成任务获得奖励！</span>
+                    </div>
+                </div>
+                
+                <!-- 任务列表 -->
+                <div class="bg-white rounded-2xl shadow-xl p-6">
+                    <h3 class="text-lg font-bold text-dark mb-4">当前任务</h3>
+                    <div id="adventure-tasks" class="space-y-3">
+                        <!-- 任务将通过JS动态生成 -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- 冒险模式 - 任务页面 -->
+            <section id="adventure-task-screen" class="hidden min-h-[70vh]">
+                <div class="bg-white rounded-2xl shadow-xl p-6 mb-8">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 id="task-title" class="text-xl font-bold text-dark">任务标题</h3>
+                        <button id="back-to-map-btn" class="text-primary hover:text-primary/80 text-sm font-medium flex items-center">
+                            <i class="fa fa-arrow-left mr-1"></i>
+                            返回地图
+                        </button>
+                    </div>
+                    
+                    <div class="mb-6">
+                        <div id="task-image" class="w-full h-48 bg-gray-100 rounded-xl mb-4 overflow-hidden">
+                            <img src="https://picsum.photos/id/1031/800/400" alt="任务图片" class="w-full h-full object-cover">
+                        </div>
+                        <p id="task-description" class="text-gray-600">
+                            任务描述将在这里显示...
+                        </p>
+                    </div>
+                    
+                    <div id="task-content" class="space-y-4 mb-8">
+                        <!-- 任务内容将通过JS动态生成 -->
+                    </div>
+                    
+                    <div class="flex justify-between items-center">
+                        <div class="text-sm text-gray-500">
+                            完成奖励: <span id="task-reward" class="text-primary font-medium">10分</span>
+                        </div>
+                        <button id="submit-task-btn" class="bg-primary hover:bg-primary/90 text-white font-bold py-2 px-6 rounded-full shadow-lg btn-hover">
+                            提交答案
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 结果页面 -->
+            <section id="result-screen" class="hidden min-h-[70vh] flex flex-col items-center justify-center text-center px-4">
+                <div class="result-appear">
+                    <div class="relative mb-8">
+                        <div class="w-40 h-40 bg-primary/10 rounded-full flex items-center justify-center mx-auto">
+                            <span id="result-score" class="text-5xl font-bold text-primary">0</span>
+                            <span class="text-3xl font-bold text-primary ml-1">分</span>
+                        </div>
+                        <div id="result-trophy-container" class="absolute -top-4 -right-4 w-16 h-16 bg-white rounded-full shadow-lg flex items-center justify-center">
+                            <i id="result-trophy-icon" class="fa fa-trophy text-gold text-2xl trophy-glow"></i>
+                        </div>
+                    </div>
+                    <h3 id="result-title" class="text-2xl font-bold text-dark mb-2">冒险结果</h3>
+                    <p id="result-description" class="text-gray-600 mb-6 max-w-md mx-auto">
+                        你的冒险表现将在这里显示
+                    </p>
+                    
+                    <!-- 成就徽章 -->
+                    <div class="mb-8">
+                        <h4 class="text-sm font-semibold text-gray-600 mb-3">获得的徽章</h4>
+                        <div id="result-badges-container" class="flex justify-center flex-wrap gap-3">
+                            <!-- 徽章将通过JS动态生成 -->
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white rounded-2xl shadow-lg p-6 mb-8 max-w-md mx-auto">
+                        <div class="grid grid-cols-2 gap-4">
+                            <div class="bg-gray-50 rounded-lg p-3">
+                                <div class="text-xs text-gray-500 mb-1">总得分</div>
+                                <div id="result-total-score" class="font-bold text-primary text-xl">0</div>
+                            </div>
+                            <div class="bg-gray-50 rounded-lg p-3">
+                                <div class="text-xs text-gray-500 mb-1">获得金币</div>
+                                <div id="result-coins" class="font-bold text-gold text-xl">0</div>
+                            </div>
+                            <div class="bg-gray-50 rounded-lg p-3">
+                                <div class="text-xs text-gray-500 mb-1">完成任务</div>
+                                <div id="result-tasks-completed" class="font-bold text-success text-xl">0</div>
+                            </div>
+                            <div class="bg-gray-50 rounded-lg p-3">
+                                <div class="text-xs text-gray-500 mb-1">探索区域</div>
+                                <div id="result-areas-explored" class="font-bold text-exhibition text-xl">0</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 专业匹配度 -->
+                    <div class="bg-gradient-to-r from-primary to-blue-400 rounded-2xl shadow-lg p-6 mb-8 max-w-md mx-auto text-white">
+                        <h4 class="font-bold mb-2">会展专业匹配度</h4>
+                        <div class="flex justify-between items-center mb-2">
+                            <span class="text-sm opacity-80">匹配程度</span>
+                            <span id="result-major-match" class="font-bold">中等</span>
+                        </div>
+                        <div class="w-full h-2 bg-white/20 rounded-full overflow-hidden">
+                            <div id="result-major-match-bar" class="h-full bg-white rounded-full transition-all duration-1000" style="width: 0%"></div>
+                        </div>
+                        <p id="result-major-suggestion" class="text-sm mt-3 opacity-90 text-left">
+                            根据你的答题情况，我们建议你...
+                        </p>
+                    </div>
+                    
+                    <div class="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4 max-w-md mx-auto w-full">
+                        <button id="restart-game-btn" class="bg-primary hover:bg-primary/90 text-white font-bold py-3 px-6 rounded-full shadow-lg btn-hover flex-1 flex items-center justify-center space-x-2">
+                            <i class="fa fa-refresh"></i>
+                            <span>重新开始</span>
+                        </button>
+                        <button id="share-result-btn" class="bg-white border border-primary text-primary font-bold py-3 px-6 rounded-full shadow-lg btn-hover flex-1 flex items-center justify-center space-x-2">
+                            <i class="fa fa-share-alt"></i>
+                            <span>分享结果</span>
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 弹窗 - 分享 -->
+            <div id="share-modal" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 hidden">
+                <div class="bg-white rounded-2xl shadow-2xl p-8 max-w-md w-full mx-4 transform transition-all">
+                    <div class="text-center mb-6">
+                        <h3 class="text-xl font-bold text-dark">分享你的成绩</h3>
+                        <p class="text-gray-600 mt-1">邀请好友一起参加会展知识大冒险</p>
+                    </div>
+                    <div class="flex justify-center space-x-6 mb-8">
+                        <a href="#" class="bg-[#07C160] text-white w-14 h-14 rounded-full flex items-center justify-center text-xl shadow-lg hover:opacity-90 transition-opacity">
+                            <i class="fa fa-weixin"></i>
+                        </a>
+                        <a href="#" class="bg-[#1DA1F2] text-white w-14 h-14 rounded-full flex items-center justify-center text-xl shadow-lg hover:opacity-90 transition-opacity">
+                            <i class="fa fa-twitter"></i>
+                        </a>
+                        <a href="#" class="bg-[#3B5998] text-white w-14 h-14 rounded-full flex items-center justify-center text-xl shadow-lg hover:opacity-90 transition-opacity">
+                            <i class="fa fa-facebook"></i>
+                        </a>
+                        <a href="#" class="bg-[#E60023] text-white w-14 h-14 rounded-full flex items-center justify-center text-xl shadow-lg hover:opacity-90 transition-opacity">
+                            <i class="fa fa-pinterest"></i>
+                        </a>
+                    </div>
+                    <div class="border-t border-gray-200 pt-6">
+                        <button id="close-share-modal" class="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold py-3 px-4 rounded-full transition-colors">
+                            关闭
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 弹窗 - 游戏道具 -->
+            <div id="power-up-modal" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 hidden">
+                <div class="bg-white rounded-2xl shadow-2xl p-8 max-w-md w-full mx-4 transform transition-all">
+                    <div class="text-center mb-6">
+                        <h3 id="power-up-title" class="text-xl font-bold text-dark">使用道具</h3>
+                        <p id="power-up-description" class="text-gray-600 mt-1">道具描述将在这里显示</p>
+                    </div>
+                    <div class="flex justify-center space-x-4 mb-8">
+                        <button id="confirm-power-up" class="bg-primary hover:bg-primary/90 text-white font-bold py-2 px-6 rounded-full shadow-lg btn-hover">
+                            使用
+                        </button>
+                        <button id="cancel-power-up" class="bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold py-2 px-6 rounded-full shadow-lg btn-hover">
+                            取消
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 音效 -->
+            <audio id="correct-sound" preload="auto">
+                <source src="https://assets.mixkit.co/sfx/preview/mixkit-correct-answer-tone-2870.mp3" type="audio/mpeg">
+            </audio>
+            <audio id="incorrect-sound" preload="auto">
+                <source src="https://assets.mixkit.co/sfx/preview/mixkit-wrong-answer-fail-notification-946.mp3" type="audio/mpeg">
+            </audio>
+            <audio id="power-up-sound" preload="auto">
+                <source src="https://assets.mixkit.co/sfx/preview/mixkit-video-game-retro-click-237.mp3" type="audio/mpeg">
+            </audio>
+            <audio id="streak-sound" preload="auto">
+                <source src="https://assets.mixkit.co/sfx/preview/mixkit-achievement-bell-600.mp3" type="audio/mpeg">
+            </audio>
+            <audio id="success-sound" preload="auto">
+                <source src="https://assets.mixkit.co/sfx/preview/mixkit-winning-chimes-2015.mp3" type="audio/mpeg">
+            </audio>
+            <audio id="adventure-sound" preload="auto">
+                <source src="https://assets.mixkit.co/music/preview/mixkit-ethereal-adventure-126.mp3" type="audio/mpeg">
+            </audio>
+            <audio id="click-sound" preload="auto">
+                <source src="https://assets.mixkit.co/sfx/preview/mixkit-interface-click-tone-2564.mp3" type="audio/mpeg">
+            </audio>
+        </main>
+
+        <!-- 页脚 -->
+        <footer class="mt-12 text-center text-sm text-gray-500">
+            <p>© 2023 会展专业招生宣传</p>
+            <p class="mt-1">了解更多会展专业信息，请联系我们</p>
+        </footer>
+    </div>
+
+    <script>
+        // 游戏数据
+        const questions = [
+            {
+                question: "以下哪个不属于会展行业的主要组成部分？",
+                options: ["展览", "会议", "演出", "节庆活动"],
+                answer: "演出",
+                explanation: "会展行业主要包括展览、会议和节庆活动等，演出通常属于文化娱乐行业。",
+                difficulty: "easy",
+                category: "basics"
+            },
+            {
+                question: "世界上第一个现代意义上的展览会是？",
+                options: ["1851年伦敦万国工业博览会", "1893年芝加哥世界哥伦布博览会", "1900年巴黎世界博览会", "1933年芝加哥世界博览会"],
+                answer: "1851年伦敦万国工业博览会",
+                explanation: "1851年伦敦万国工业博览会被认为是世界上第一个现代意义上的展览会，标志着会展行业的开端。",
+                difficulty: "medium",
+                category: "history"
+            },
+            {
+                question: "以下哪种不属于会展营销的常用手段？",
+                options: ["社交媒体营销", "邮件营销", "电话营销", "街头传单", "搜索引擎优化(SEO)"],
+                answer: "街头传单",
+                explanation: "街头传单虽然是一种营销手段，但在会展行业中并不常用，而社交媒体营销、邮件营销、电话营销和搜索引擎优化是会展营销的主要手段。",
+                difficulty: "easy",
+                category: "marketing"
+            },
+            {
+                question: "会展项目的可行性研究不包括以下哪个方面？",
+                options: ["市场分析", "财务预算", "人员安排", "竞争对手分析", "天气预测"],
+                answer: "天气预测",
+                explanation: "会展项目的可行性研究通常包括市场分析、财务预算、人员安排和竞争对手分析等，天气预测虽然重要，但不属于可行性研究的主要内容。",
+                difficulty: "medium",
+                category: "project"
+            },
+            {
+                question: "会展场馆的坪效是指？",
+                options: ["每平方米的展览面积", "每平方米的营业收入", "每平方米的观众数量", "每平方米的能源消耗"],
+                answer: "每平方米的营业收入",
+                explanation: "坪效是衡量会展场馆运营效率的重要指标，指的是每平方米的营业收入。",
+                difficulty: "medium",
+                category: "venue"
+            },
+            {
+                question: "会展行业中，MICE是指什么？",
+                options: ["会议、奖励旅游、大型活动和展览", "音乐、互动、创意和娱乐", "营销、创新、合作和体验", "管理、整合、沟通和参与"],
+                answer: "会议、奖励旅游、大型活动和展览",
+                explanation: "MICE是会展行业的缩写，代表会议(Meetings)、奖励旅游(Incentives)、大型活动(Conferences/Events)和展览(Exhibitions)。",
+                difficulty: "easy",
+                category: "basics"
+            },
+            {
+                question: "会展项目的风险管理不包括以下哪个方面？",
+                options: ["安全风险", "财务风险", "时间风险", "文化风险", "审美风险"],
+                answer: "审美风险",
+                explanation: "会展项目的风险管理通常包括安全风险、财务风险、时间风险和文化风险等，审美风险不属于主要的风险管理内容。",
+                difficulty: "hard",
+                category: "project"
+            },
+            {
+                question: "以下哪种技术不属于会展行业的新兴技术应用？",
+                options: ["虚拟现实(VR)", "增强现实(AR)", "人工智能(AI)", "传统展板", "大数据分析"],
+                answer: "传统展板",
+                explanation: "传统展板是会展行业的传统展示方式，而虚拟现实(VR)、增强现实(AR)、人工智能(AI)和大数据分析等属于会展行业的新兴技术应用。",
+                difficulty: "easy",
+                category: "technology"
+            },
+            {
+                question: "会展项目的预算通常不包括以下哪项？",
+                options: ["场地租赁费用", "展品运输费用", "人员工资", "营销费用", "个人消费"],
+                answer: "个人消费",
+                explanation: "会展项目的预算通常包括场地租赁费用、展品运输费用、人员工资和营销费用等，个人消费不属于项目预算范畴。",
+                difficulty: "easy",
+                category: "budget"
+            },
+            {
+                question: "会展评估的主要目的是什么？",
+                options: ["提高展会质量", "评估经济效益", "评估社会效益", "以上都是"],
+                answer: "以上都是",
+                explanation: "会展评估的主要目的包括提高展会质量、评估经济效益和社会效益等多个方面。",
+                difficulty: "medium",
+                category: "evaluation"
+            }
+        ];
+
+        // 冒险任务数据
+        const adventureTasks = {
+            exhibition: [
+                {
+                    id: "exh-1",
+                    title: "展览布局规划",
+                    description: "作为一名会展设计师，你需要为一个科技展览会规划展位布局。以下哪个选项是展览布局的基本原则？",
+                    question: "展览布局的基本原则是什么？",
+                    options: ["动线清晰、功能分区、视觉平衡", "越复杂越好、吸引眼球、节省空间", "随机分布、自由流动、无拘无束", "尽量拥挤、增加互动、节省成本"],
+                    answer: "动线清晰、功能分区、视觉平衡",
+                    reward: 20,
+                    image: "https://picsum.photos/id/1067/800/400"
+                },
+                {
+                    id: "exh-2",
+                    title: "展品运输",
+                    description: "你负责一个国际展览的展品运输，以下哪个选项是展品运输的关键考虑因素？",
+                    question: "展品运输的关键考虑因素是什么？",
+                    options: ["保险、包装、运输方式、时间安排", "价格、速度、方便性、美观性", "重量、体积、颜色、形状", "品牌、质量、数量、价值"],
+                    answer: "保险、包装、运输方式、时间安排",
+                    reward: 25,
+                    image: "https://picsum.photos/id/1070/800/400"
+                }
+            ],
+            conference: [
+                {
+                    id: "con-1",
+                    title: "会议策划",
+                    description: "你正在策划一个行业峰会，需要确定会议的主题和议程。以下哪个选项是会议策划的第一步？",
+                    question: "会议策划的第一步是什么？",
+                    options: ["确定会议目标和主题", "选择会议场地", "邀请演讲嘉宾", "制定预算"],
+                    answer: "确定会议目标和主题",
+                    reward: 20,
+                    image: "https://picsum.photos/id/1076/800/400"
+                },
+                {
+                    id: "con-2",
+                    title: "会议技术",
+                    description: "现代会议越来越依赖各种技术支持。以下哪种技术不属于会议中常用的技术？",
+                    question: "以下哪种技术不属于会议中常用的技术？",
+                    options: ["虚拟现实(VR)", "现场直播", "同声传译", "投票系统"],
+                    answer: "虚拟现实(VR)",
+                    reward: 25,
+                    image: "https://picsum.photos/id/1079/800/400"
+                }
+            ],
+            event: [
+                {
+                    id: "evt-1",
+                    title: "活动策划",
+                    description: "你正在策划一个企业年会，需要考虑活动的各个方面。以下哪个选项是活动策划的核心要素？",
+                    question: "活动策划的核心要素是什么？",
+                    options: ["主题、内容、形式、预算", "场地、时间、嘉宾、餐饮", "音响、灯光、舞台、装饰", "宣传、报名、签到、抽奖"],
+                    answer: "主题、内容、形式、预算",
+                    reward: 20,
+                    image: "https://picsum.photos/id/1080/800/400"
+                },
+                {
+                    id: "evt-2",
+                    title: "活动营销",
+                    description: "为了吸引更多人参加你的活动，你需要进行有效的营销。以下哪种营销渠道对活动推广最有效？",
+                    question: "以下哪种营销渠道对活动推广最有效？",
+                    options: ["社交媒体、电子邮件、合作伙伴、口碑传播", "电视广告、报纸广告、广播广告、户外广告", "传单、海报、横幅、路演", "搜索引擎优化、内容营销、网红合作、赞助"],
+                    answer: "社交媒体、电子邮件、合作伙伴、口碑传播",
+                    reward: 25,
+                    image: "https://picsum.photos/id/1081/800/400"
+                }
+            ],
+            venue: [
+                {
+                    id: "ven-1",
+                    title: "场馆选择",
+                    description: "你需要为一个大型展览选择合适的场馆。以下哪个选项不是场馆选择的关键因素？",
+                    question: "以下哪个选项不是场馆选择的关键因素？",
+                    options: ["地理位置、交通便利、周边配套", "场馆大小、布局、设施", "租金价格、押金、付款方式", "场馆颜色、形状、历史背景"],
+                    answer: "场馆颜色、形状、历史背景",
+                    reward: 20,
+                    image: "https://picsum.photos/id/1082/800/400"
+                },
+                {
+                    id: "ven-2",
+                    title: "场馆管理",
+                    description: "作为场馆管理人员，你需要确保场馆的正常运营。以下哪个选项是场馆管理的主要职责？",
+                    question: "以下哪个选项是场馆管理的主要职责？",
+                    options: ["设施维护、安全保障、客户服务、市场营销", "清洁卫生、餐饮服务、停车管理、票务销售", "人员招聘、培训、考核、激励", "活动策划、组织、执行、评估"],
+                    answer: "设施维护、安全保障、客户服务、市场营销",
+                    reward: 25,
+                    image: "https://picsum.photos/id/1083/800/400"
+                }
+            ]
+        };
+
+        // 游戏状态
+        let currentGameMode = null;
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let coins = 0;
+        let correctAnswers = 0;
+        let incorrectAnswers = 0;
+        let timerInterval;
+        let timeLeft = 30;
+        let currentStreak = 0;
+        let maxStreak = 0;
+        let powerUps = {
+            '50-50': 1,
+            'extra-time': 1,
+            'skip': 1
+        };
+        let currentPowerUp = null;
+        let isGameActive = false;
+        let usedQuestions = [];
+        let playerName = "玩家";
+        let playerAvatar = "https://picsum.photos/id/1025/100/100";
+        let completedTasks = [];
+        let currentArea = null;
+        let currentTask = null;
+        let areasExplored = 0;
+        let tasksCompleted = 0;
+        let playerLevel = 1;
+
+        // DOM元素
+        const startScreen = document.getElementById('start-screen');
+        const quizScreen = document.getElementById('quiz-screen');
+        const adventureScreen = document.getElementById('adventure-screen');
+        const adventureTaskScreen = document.getElementById('adventure-task-screen');
+        const resultScreen = document.getElementById('result-screen');
+        const progressContainer = document.getElementById('progress-container');
+        const progressBar = document.getElementById('progress-bar');
+        const currentQuestionEl = document.getElementById('current-question');
+        const totalQuestionsEl = document.getElementById('total-questions');
+        const questionNumber = document.getElementById('question-number');
+        const questionText = document.getElementById('question-text');
+        const optionsContainer = document.getElementById('options-container');
+        const timerEl = document.getElementById('timer');
+        const streakContainer = document.getElementById('streak-container');
+        const streakCount = document.getElementById('streak-count');
+        const scoreText = document.getElementById('score-text');
+        const resultTitle = document.getElementById('result-title');
+        const resultDescription = document.getElementById('result-description');
+        const correctCount = document.getElementById('correct-count');
+        const incorrectCount = document.getElementById('incorrect-count');
+        const maxStreakCount = document.getElementById('max-streak-count');
+        const scorePercentage = document.getElementById('score-percentage');
+        const startBtn = document.getElementById('start-btn');
+        const restartBtn = document.getElementById('restart-btn');
+        const shareBtn = document.getElementById('share-btn');
+        const shareModal = document.getElementById('share-modal');
+        const closeShareModal = document.getElementById('close-share-modal');
+        const powerUpModal = document.getElementById('power-up-modal');
+        const confirmPowerUp = document.getElementById('confirm-power-up');
+        const cancelPowerUp = document.getElementById('cancel-power-up');
+        const powerUpTitle = document.getElementById('power-up-title');
+        const powerUpDescription = document.getElementById('power-up-description');
+        const powerUpsContainer = document.getElementById('power-ups-container');
+        const badgesContainer = document.getElementById('badges-container');
+        const trophyIcon = document.getElementById('trophy-icon');
+        const majorMatch = document.getElementById('major-match');
+        const majorMatchBar = document.getElementById('major-match-bar');
+        const majorSuggestion = document.getElementById('major-suggestion');
+        
+        // 经典模式元素
+        const quizContainer = document.getElementById('quiz-container');
+        const quizQuestionNumber = document.getElementById('quiz-question-number');
+        const quizQuestionText = document.getElementById('quiz-question-text');
+        const quizOptionsContainer = document.getElementById('quiz-options-container');
+        const quizTimer = document.getElementById('quiz-timer');
+        const quizStreakContainer = document.getElementById('quiz-streak-container');
+        const quizStreakCount = document.getElementById('quiz-streak-count');
+        const quizPowerUpsContainer = document.getElementById('quiz-power-ups-container');
+        const quizProgressCurrent = document.getElementById('quiz-progress-current');
+        const quizProgressTotal = document.getElementById('quiz-progress-total');
+        const quizProgressBar = document.getElementById('quiz-progress-bar');
+        
+        // 冒险模式元素
+        const adventureScore = document.getElementById('adventure-score');
+        const adventureCoins = document.getElementById('adventure-coins');
+        const adventureTasksContainer = document.getElementById('adventure-tasks');
+        const playerAvatarElement = document.getElementById('player-avatar');
+        const backToMapBtn = document.getElementById('back-to-map-btn');
+        const taskTitle = document.getElementById('task-title');
+        const taskDescription = document.getElementById('task-description');
+        const taskImage = document.getElementById('task-image');
+        const taskContent = document.getElementById('task-content');
+        const taskReward = document.getElementById('task-reward');
+        const submitTaskBtn = document.getElementById('submit-task-btn');
+        
+        // 结果页面元素
+        const resultScore = document.getElementById('result-score');
+        const resultTrophyIcon = document.getElementById('result-trophy-icon');
+        const resultBadgesContainer = document.getElementById('result-badges-container');
